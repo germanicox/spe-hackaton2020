@@ -1,6 +1,8 @@
 # spe-hackaton2020
 Participation in SPE Colombia 2020 
 
+Nov 04th, 2020
+
 Based on SPE-Guidelines 1st delivery focus on read_and_proccess.py file 
 
 This file is able to read & proccess excel files from local machine (passed as arguments) or directly from ANH web page if "auto" reserved word is passed as argument
