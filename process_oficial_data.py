@@ -1,3 +1,15 @@
+#______________________________________________________
+# Author: German Barboza                               |
+# email: germanbarboza@gmail.com                       |
+# github: germanicox                                   |
+# twitter: germanicox                                  |
+# linkedin: https://www.linkedin.com/in/gbarboza2020/  |
+#______________________________________________________
+
+# November - 2020
+# This script is inented to solve data collection and format for SPE-2020 Colombia Section Hackaton 
+# Details at: https://github.com/specolombiahackathon/202010/wiki
+
 
 import pandas as pd
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -11,12 +23,12 @@ print("IS EXPECTED TO RUN PREVIOUSLY <<read_and_process.py>> script to read / fo
 # filename = sys.argv[count_input_file+1]
 
 
-conn = sql.connect('prueba_de_fuego.db')
+conn = sql.connect('datos_oficiales.db')
 
 # all data base is loaded in memory pandas data frame
 # all data mining and process is done in memory with pandas ;) 
 
-production_df = pd.read_sql('SELECT * FROM prueba_de_fuego', conn)
+production_df = pd.read_sql('SELECT * FROM datos_oficiales', conn)
 
 # for BONUS plotting every task requested plot init 
 
@@ -35,7 +47,7 @@ production_df = pd.read_sql('SELECT * FROM prueba_de_fuego', conn)
 MONTHS = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE']
 
 # 1 - Indique el top 5 de los campos con mayor producción durante el año 2020 - 2 puntos
-answer1 = production_df[production_df['YEAR']=='2020']
+answer1 = production_df[production_df['YEAR']=='2020'].round(2)
 answer1['TOTAL_PROD_YEAR'] = production_df.loc[:, MONTHS].sum(axis=1)
 answer1 = (answer1.groupby(['CAMPO'])['TOTAL_PROD_YEAR'].agg('sum')).sort_values(ascending=False).head(5)
 # if you want include more data in order, lets say top 10 just replace ...head(10) in the line above 
@@ -52,7 +64,7 @@ plt.gca().invert_yaxis()
 del answer1
 
 # 2 - Indique cuántas y cuáles compañias han reportado producción en más de 5 campos en Casanare en el año 2018 - 2 puntos
-answer2 = production_df[production_df['YEAR']=='2018']
+answer2 = production_df[production_df['YEAR']=='2018'].round(2)
 answer2 = answer2[answer2['DEPARTAMENTO']=='CASANARE']
 # DataFrame.nunique() Count distinct observations over requested axis  *** because some field are more than once in Casanare for same Operator
 answer2 = answer2.groupby(['OPERADORA'])['CAMPO'].nunique().sort_values(ascending=False)
@@ -70,7 +82,7 @@ plt.gca().invert_yaxis()
 del answer2
 
 # 3 - Indique los 5 contratos con la más alta producción en MMstb en el año 2018 - 2 puntos
-answer3 = production_df[production_df['YEAR']=='2018']
+answer3 = production_df[production_df['YEAR']=='2018'].round(2)
 answer3['TOTAL_PROD_YEAR'] = production_df.loc[:, MONTHS].sum(axis=1)
 answer3 = (answer3.groupby(['CONTRATO'])['TOTAL_PROD_YEAR'].agg('sum')).sort_values(ascending=False).head(5)
 print('\n*** Top 5 - Contratos con Mayor Produccion (2018) ***')
@@ -85,7 +97,7 @@ plt.gca().invert_yaxis()
 del answer3
 
 # 4 - Ordene de mayor a menor las 10 Operadoras con mayor produccion en el mes de agosto 2019 - 2 puntos
-answer4 = production_df[production_df['YEAR']=='2019']
+answer4 = production_df[production_df['YEAR']=='2019'].round(2)
 answer4 = answer4.groupby(['OPERADORA'])['AGOSTO'].agg('sum').sort_values(ascending=False).head(10)
 print('\n*** Top 10 - Operadoras con Mayor Produccion en el mes de Agosto 2019 ***')
 print(answer4)
@@ -103,12 +115,12 @@ del answer4
 Q1 = ['ENERO', 'FEBRERO', 'MARZO']
 Q2 = ['ABRIL', 'MAYO', 'JUNIO']
 
-answer5_Q1_2019 = production_df[ (production_df['YEAR'] == '2019') ][Q1].sum()
+answer5_Q1_2019 = production_df[ (production_df['YEAR'] == '2019') ][Q1].sum().round(2)
 answer5_Q1_2019['Q1'] = answer5_Q1_2019[Q1].sum()
 answer5_Q1_2019 = answer5_Q1_2019.to_frame()
 answer5_Q1_2019.columns = ['2019']
 
-answer5_Q1_2020 = production_df[ (production_df['YEAR'] == '2020') ][Q1].sum()
+answer5_Q1_2020 = production_df[ (production_df['YEAR'] == '2020') ][Q1].sum().round(2)
 answer5_Q1_2020['Q1'] = answer5_Q1_2020[Q1].sum()
 answer5_Q1_2020 = answer5_Q1_2020.to_frame()
 answer5_Q1_2020.columns = ['2020']
@@ -140,7 +152,7 @@ answer5_Q2 = answer5_Q2_2019.merge(answer5_Q2_2020, left_index=True, right_index
 answer5_Q2['COMPARE'] = round(answer5_Q2['2020'] - answer5_Q2['2019'], 2)
 answer5_Q2['%'] = round((answer5_Q2['COMPARE'] / answer5_Q2['2019'])*100 , 1)
 
-print('\n*** Analisis comparativo Produccion Q1 2019/2020 ***')
+print('\n*** Analisis comparativo Produccion Q1-Q2 2019/2020 ***')
 print(answer5_Q1)
 print(answer5_Q2)
 
@@ -148,11 +160,14 @@ print(answer5_Q2)
 y_min = min(answer5_Q1[['2019', '2020']].min())*0.95 #scale Y-axis min limits for plot
 y_max = max(answer5_Q1[['2019', '2020']].max())*1.05 #scale Y-axis min limits for plot
 
+fig, axes = plt.subplots(nrows=2, ncols=2) 
 
-fig1 = plt.figure()
-ax_5 = fig1.add_subplot(221)
-answer5_Q1.loc[Q1, ['2019', '2020']].plot(kind='bar', title='Analisis comparativo Produccion Q1 2019/2020')
-ax_5.set(ylim=[y_min, y_max])
+answer5_Q1.loc[Q1, ['2019', '2020','COMPARE']].plot(kind='bar', ax= axes[0,0], title='Analisis comparativo Produccion Q1 2019/2020')
+answer5_Q2.loc[Q2, ['2019', '2020','COMPARE']].plot(kind='bar', ax= axes[0,1] , title='Analisis comparativo Produccion Q2 2019/2020')
+
+answer5_Q1.loc['Q1', ['2019', '2020']].plot(kind='bar', ax = axes[1,0])
+answer5_Q2.loc['Q2', ['2019', '2020']].plot(kind='bar', ax = axes[1,1])
+# answer5_Q1.loc['%', ['2019', '2020']].plot(kind='line', ax = axes[1,0] , color='red')
 
 plt.show()
 

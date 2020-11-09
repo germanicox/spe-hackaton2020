@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SPE Hackaton 2020 by germanicox</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+   
+    <link href='https://fonts.googleapis.com/css?family=Oxygen:400,300,700' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="../static/js/data_web_app.js"></script>
+  </head>
+
+  <body id="body">
+    <br><br>
+    <!-- Main data input -->
+
+    <div>
+      <h3>Es necesario cargar una base de datos: </h3>
+      <div class="input-group">
+        <br>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="database_input" aria-describedby="inputGroupFileAddon04" disabled>
+          <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+        </div>
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04">Button</button>
+        </div>
+        
+      </div>
+      <h5>Not programmed at this Beta version ... database is loaded from this app root folder</h5>
+
+    <form id="first" method="POST"  >
+
+        <br><br>
+      <h3>Seleecione en los siguientes desplegables los criteros de su busqueda</h3> 
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="inputGroupSelect01">ANO:    </label>
+        </div>
+        <select id="year_input">
+          <option selected disabled>Select</option>
+          <option>ALL</option>
+          {% for each in unique_year %}
+          <option value="{{each}}">{{each}}</option>
+          {% endfor %}
+        </select>
+      </div>
+ 
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="inputGroupSelect01">DEPARTAMENTO:</label>
+        </div>
+        <select id="departamento_input">
+          <option selected disabled>Select</option>
+          <option>ALL</option>
+          {% for each in unique_departamento %}
+          <option value="{{each}}">{{each}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="inputGroupSelect01">MUNICIPIO:</label>
+        </div>
+        <select id="municipio_input">
+          <option selected disabled>Select</option>
+          <option>ALL</option>
+          {% for each in unique_municipio %}
+          <option value="{{each}}">{{each}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="inputGroupSelect01">OPERADORA:</label>
+        </div>
+        <select id="operadora_input">
+          <option selected disabled>Select</option>
+          <option>ALL</option>
+          {% for each in unique_operadora %}
+          <option value="{{each}}">{{each}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="inputGroupSelect01">CONTRATO:</label>
+        </div>
+        <select id="contrato_input">
+          <option selected disabled>Select</option>
+          <option>ALL</option>
+          {% for each in unique_contrato %}
+          <option value="{{each}}">{{each}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="inputGroupSelect01">CAMPO:</label>
+        </div>
+        <select id="campo_input">
+          <option selected disabled>Select</option>
+          <option>ALL</option>
+          {% for each in unique_campo %}
+          <option value="{{each}}">{{each}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <br>
+      <button id="production_query" type="button" class="btn btn-primary btn-lg">Procesar Busqueda</button>
+      <br>
+    </form>
+    </div> <!-- Main DIV for Query Search -->
+  
+    <!-- to show results  -->
+    <br>
+    <br>
+
+    <div class="col-sm centered">
+      <img id='image' src="./static/grafico_inicial.png" class="img-fluid rounded  " alt="Responsive image">
+    </div>
+
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Index</th>
+          <th scope="col">YEAR</th>
+          <th scope="col">DEPARTAMENTO</th>
+          <th scope="col">MUNICIPIO</th>
+          <th scope="col">OPERADORA</th>
+          <th scope="col">CONTRATO</th>
+          <th scope="col">CAMPO</th>
+          <th scope="col">ENERO</th>
+          <th scope="col">FEBRERO</th>
+          <th scope="col">MARZO</th>
+          <th scope="col">ABRIL</th>
+          <th scope="col">MAYO</th>
+          <th scope="col">JUNIO</th>
+          <th scope="col">JULIO</th>
+          <th scope="col">AGOSTO</th>
+          <th scope="col">SEPTIEMBRE</th>
+          <th scope="col">OCTUBRE</th>
+          <th scope="col">NOVIEMBRE</th>
+          <th scope="col">DICIEMBRE</th>
+        </tr>
+      </thead>
+
+      <tbody id="query_result">
+        <!-- here is generated automatic query data from JQUERY - JavaScript AJAX request to python Flask  -->
+      </tbody>
+    </table>
+
+    <div id = 'errorAlert' class="alert alert-success" role="alert" hidden>
+      <h4 class="alert-heading">Opps Something was Wrong with your Query!</h4>
+      <p>This is a Beta release version for Colombia SPE 2020 Hackaton and not all functionalities are at 100%</p>
+      <hr>
+      <p class="mb-0">Chek if you have selected options for fields non "Select"</p>
+      <p class="mb-0">You should try to redefine your Query ! Try "ALL" option in some fields if you have doubts if exist</p>
+    </div>
+
+
+    <!-- This table is to show ALL single values available in database  -->
+    <!-- hideen by defaul no filter apply  -->
+    <table class="table" hidden>
+        <tr>
+            {% for col in column_names %}
+              <th scope="col">{{col}}</th>
+            {% endfor %}
+        </tr>
+        {% for row in row_data %}
+        <tr>
+            {% for col, row_ in zip(column_names, row) %}
+                <th scope="row">{{row_}}</th>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+
+
+
+
+  </body>
+
+  <footer>
+
+  </footer>
+
+  </html>

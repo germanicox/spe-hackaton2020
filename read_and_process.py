@@ -24,6 +24,9 @@ df = pd.DataFrame() #to append and store full data set entered based on files in
 
 def proccesing_excel__input_file(filename) :
     
+    #boolean variable to identify possible no standard format from ANH as seen in Blind Test  
+    format_is_ANH = True 
+    
     book = xlrd.open_workbook(filename)
     print("The number of worksheets is {0}".format(book.nsheets))
     print("Worksheet name(s): {0}".format(book.sheet_names()))
@@ -44,22 +47,40 @@ def proccesing_excel__input_file(filename) :
     #a comment seen as: Fuente: ANH / Sistema Oficial de Liquidación y Administración de Regalías - SOLAR
     rx = sh.nrows
     if (sh.cell_value(rowx=rx-1, colx=0)) == '' :
-        footage = 1
+        footage = 1  #footage format in a row where TOTALS per column is present in oficial ANH format
     else :
-        footage = 2
+        #two possible options: there is last data row ? or it's comment from ANH source format ?
+        if sh.cell_value(rowx=rx-1, colx=1) =='' :
+            footage = 2  # some ANH files include a message informative from ANH in its first column row
+        else :
+            #definetly it is NOT ANH file format - lets procees it as BLIND_TEST
+             footage = 0  #no footage 
+             header_ends = 0 #no header - first row is directly columns name 
+            #  data_year = '2017' 
+             print(filename)
+             year = filename.find('20')
+             data_year = filename[year:year+4]
+             format_is_ANH = False 
 
-    for rx in range(sh.nrows) :
-        listToStr = ' '.join(str(elem) for elem in sh.row(rx))
-        year = listToStr.find('20') #looking for year in header ONLY WORKS for years >= 2000
+    if format_is_ANH : 
+        for rx in range(sh.nrows) :
+            listToStr = ' '.join(str(elem) for elem in sh.row(rx))
+            year = listToStr.find('20') #looking for year in header ONLY WORKS for years >= 2000
         
-        if (year != -1) & (year_found==False):  
-            #year TAG found in header
-            data_year = listToStr[year:year+4]         
-            year_found = True
+            if (year != -1) & (year_found==False):  
+                #year TAG found in header
+                data_year = listToStr[year:year+4]         
+                year_found = True
         
-        if (sh.cell_value(rowx=rx, colx=0) == 'Departamento' ) or (sh.cell_value(rowx=rx, colx=0) == 'concatenar' ) :
-            header_ends = rx
-            return data_year , header_ends , footage
+            if (sh.cell_value(rowx=rx, colx=0) == 'Departamento' ) or (sh.cell_value(rowx=rx, colx=0) == 'concatenar' ) :
+                header_ends = rx
+                return data_year , header_ends , footage
+    
+    else :
+        return data_year , header_ends , footage
+
+    
+
 
 def read_files_and_bring_data_to_pandas (files) :   
     global df
