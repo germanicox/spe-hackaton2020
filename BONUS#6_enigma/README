@@ -1,0 +1,16 @@
+Run 
+python enigma.py
+
+Como fue el proceso para descifrar: 
+
+1. Visualmente y agrupando los codigos por departamento, municipio ... campo pude notar que ARAUCA es el unico departamento que tambien tiene un municipio con el mismo nombre.
+A partir de alli, tambien dentro de ARAUCA pude notar que es el unico en los datos que tiene un contrato con el mismo nombre del campo. Entonces pude identificar una fila de arranque
+
+2. Al evaluar la produccion de esta fila de arranque (initial key) con los valores originales. Pude notar que no eran exactamente iguales, pero seguian la tendencia y propuse evaluar 
+metodo de Error Cuadratico Medio sobre los datos de produccion para darme cuenta que efectivamente el minimo MSE correspondia a dicha clave inicial 
+
+3. Evaluando MSE sobre todos y cada uno de las filas disponibles de produccion, pude notar que podia completar los codigos con la primera coincidencia 
+
+
+Una mezcla entre evaluacion inicial de datos, agrupar, totalizar, visualizar con la propuesta de un metodo que podia ajustar los datos de produccion BLIND a los Originales 
+
