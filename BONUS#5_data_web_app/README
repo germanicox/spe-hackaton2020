@@ -1,0 +1,10 @@
+Flask App 
+
+run in your console as: 
+ python hackaton_data_web.py 
+ 
+ Go to your web browser an open localhost / port 500 
+ http://127.0.0.1:5000/
+ 
+ YOU MUST BE CONNECTED TO INTERNET SINCE JQuery & Bootstrap libraries are being linked online for full functionality at this beta version 
+ 
